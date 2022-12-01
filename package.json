@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
-    "dev": "nodemon --delay 5 src/index.js"
+    "dev": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
