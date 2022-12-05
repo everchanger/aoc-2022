@@ -52,7 +52,7 @@ const runTests = async (func, data, part)  => {
   let pass = true
   for (const t of data) {
     const result = await func(t.input)
-    const testOk = result === parseInt(t.expected)
+    const testOk = result == t.expected
     if (!testOk) {
       console.log(kleur.red(`Test failed, expected [${t.expected}], got [${result}] (input ${t.input})`))
     }
