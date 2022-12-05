@@ -1,67 +1,32 @@
-async function taskA (input) {
-  const rows = input.split('\n')
-  let stacks = {}
-  // Find the rows containing the labels first, then build the stacks and parse the move instructions
-  for (const index in rows) {
-    const row = rows[index]
-    if (row[1] === '1') {
-      stacks = parseStacks(rows, index)
-    }
-
-    if (row[0] === 'm') {
-      // Parse a move instruction
-      const [_, count, from, to] = row.match(/move (\d+) from (\d+) to (\d+)/)
-
-      for (let i = 0; i < count; ++i) {
-        stacks[to].push(stacks[from].pop())
+function getTopCrates (input, move) {
+  const output = input.split('\n').reduce((data, row, index, rows) => {
+    if (row[0] === '[' || row.startsWith('  ')) {
+      for (let i = 0, col = 1; i < row.length; i += 4, col++) {
+        if (!data.stacks[col]) data.stacks[col] = []
+        if (row[i + 1] !== ' ') data.stacks[col].unshift(row[i + 1])
       }
+    } else if (row[0] === 'm') {
+      const [_, count, from, to] = row.match(/move (\d+) from (\d+) to (\d+)/)
+      move(data.stacks, from, to, count)
     }
-  }
 
-  const tops = Object.values(stacks).flatMap(stack => stack[stack.length - 1][1]).join('')
+    if (index === rows.length - 1) data.result = Object.values(data.stacks).reduce((concat, stack) => concat + stack.pop(), '')
 
-  return tops
+    return data
+  }, { stacks: {}, result: '' })
+  return output.result
+}
+
+async function taskA (input) {
+  return getTopCrates(input, (stacks, from, to, count) => {
+    for (let i = 0; i < count; ++i) {
+      stacks[to].push(stacks[from].pop())
+    }
+  })
 }
 
 async function taskB (input) {
-  const rows = input.split('\n')
-  let stacks = {}
-  // Find the rows containing the labels first, then build the stacks and parse the move instructions
-  for (const index in rows) {
-    const row = rows[index]
-    if (row[1] === '1') {
-      stacks = parseStacks(rows, index)
-    }
-
-    if (row[0] === 'm') {
-      // Parse a move instruction
-      const [_, count, from, to] = row.match(/move (\d+) from (\d+) to (\d+)/)
-      stacks[to].push(...stacks[from].splice(-parseInt(count)))
-    }
-  }
-
-  const tops = Object.values(stacks).flatMap(stack => stack[stack.length - 1][1]).join('')
-
-  return tops
-}
-
-function parseStacks (rows, labelIndex) {
-  const stacks = {}
-  const colDist = 4
-  const row = rows[labelIndex]
-  for (let col = 0; col < row.length; col += colDist) {
-    // Offset with one to find the value of the label, this only works for single digit columns
-    const colLabel = row[col + 1]
-    stacks[colLabel] = []
-    // Found stack numbers, all previous lines are stacks, create the stacks
-    for (let i = 0; i < labelIndex; ++i) {
-      stacks[colLabel].push(rows[i].slice(col, col + colDist))
-    }
-
-    // Remove whitespace and reverse
-    stacks[colLabel] = stacks[colLabel].filter(entry => entry.trim()).reverse()
-  }
-  return stacks
+  return getTopCrates(input, (stacks, from, to, count) => stacks[to].push(...stacks[from].splice(-parseInt(count))))
 }
 
 export { taskA, taskB }
