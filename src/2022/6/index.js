@@ -1,16 +1,17 @@
 function parse (input, sequenceLength) {
   for (let i = 0; i < input.length; ++i) {
-    // a b c d d e j e k l
-
-    if ([...input.slice(i, i + sequenceLength)].every((c, _, a) => {
-      const first = a.indexOf(c)
-      const last = a.lastIndexOf(c)
-      if (first !== last) {
-        // Skip ahead in the sequence since we know that there is a duplicate at start index
-        i = i + first
+    let unique = true
+    // Check a range of characters of length sequenceLength for uniqueness
+    for (let j = i; j < i + sequenceLength; ++j) {
+      const first = input.indexOf(input[j], i)
+      unique = first === input.lastIndexOf(input[j], i + sequenceLength - 1)
+      if (!unique) {
+        // Skip ahead in the sequence since we know that there is a duplicate at first index
+        i = first
+        break
       }
-      return first === last
-    })) {
+    }
+    if (unique) {
       return i + sequenceLength
     }
   }
