@@ -33,7 +33,7 @@ const possibleTargets = (grid, current, destination) => {
 }
 
 async function taskA (input) {
-  console.log(input)
+  // console.log(input)
   const start = {}
   const end = {}
 
@@ -62,17 +62,55 @@ async function taskA (input) {
 
   const current = start
 
-  console.log('neigh', current.neighbours)
+  // console.log('neigh', current.neighbours)
 
   // path.push()
 
-  // After trying a direction, save the dirs in the array so we know which dir we already tried ['u', 'd', 'l', 'r']
-  // while (true) {
+  const path = []
+  let lowestScoredepth = 0
 
-  // }
+  const scores = []
+  navigate(current, grid, end, path, scores)
+  console.log(scores)
 
-  console.log(start, end, grid)
-  return grid
+  const sortedScores = scores.sort((a, b) => a - b)
+
+  console.log(sortedScores[0])
+
+  // console.log(start, end, grid)
+  return sortedScores[0]
+}
+
+let i = 0
+const navigate = (node, grid, end, path, scores) => {
+  i++
+  const { x, y } = node
+
+  if (x === end.x && y === end.y) {
+    console.log('SOLUTION FOUND')
+    return path
+  }
+
+  const neighbours = grid[y][x].neighbours
+
+  // Don't revisit the same node, if we do, abort
+  const pathKey = `${x}${y}`
+  if (path.includes(pathKey)) {
+    // console.log('revisit detected, abort abort abort')
+    return false
+  }
+  path.push(pathKey)
+  
+  if (i === 20) {
+    return false
+  }
+
+  for (let i = 0; i < neighbours.length; ++i) {
+    // console.log('navigate to', neighbours[i].x, neighbours[i].y)
+    let finalPath = navigate(neighbours[i], grid, end, [...path], scores)
+    if (finalPath) scores.push(finalPath.length)
+  }
+  return false
 }
 
 async function taskB (input) {
