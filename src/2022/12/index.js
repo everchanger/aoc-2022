@@ -67,7 +67,7 @@ async function taskA (input) {
   // path.push()
 
   const path = []
-  let lowestScoredepth = 0
+  const lowestScoredepth = 0
 
   const scores = []
   navigate(current, grid, end, path, scores)
@@ -100,14 +100,10 @@ const navigate = (node, grid, end, path, scores) => {
     return false
   }
   path.push(pathKey)
-  
-  if (i === 20) {
-    return false
-  }
 
   for (let i = 0; i < neighbours.length; ++i) {
     // console.log('navigate to', neighbours[i].x, neighbours[i].y)
-    let finalPath = navigate(neighbours[i], grid, end, [...path], scores)
+    const finalPath = navigate(neighbours[i], grid, end, [...path], scores)
     if (finalPath) scores.push(finalPath.length)
   }
   return false

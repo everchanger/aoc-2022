@@ -77,6 +77,7 @@ const run = async (dayPath) => {
     console.log(kleur.green('Tests for taskA is OK!'))
   }
 
+
   const input = fs.readFileSync(`${dayPath}/input`, 'utf8')
 
   console.log(kleur.yellow('\nRunning A...'))
